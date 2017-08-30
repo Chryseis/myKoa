@@ -1,0 +1,108 @@
+@import "common";
+#wrap{
+  //首页
+  .homePage{
+    width: 80%;
+    margin: 35px auto;
+    h2{
+      font-size: 18px;
+      color: #2D3652;
+      font-weight: normal;
+    }
+    .card{
+      float: left;
+      width: 280px;
+      height: 168px;
+      color: #FFFFFF;
+      border-radius: 4px;
+      background-size: 100% 100%;
+      margin: 20px 20px 20px 0;
+      padding:20px;
+      box-sizing: border-box;
+      position: relative;
+
+      .xiabiao{
+        border:18px solid #FD8A5C;
+        border-top-color: transparent;
+        border-left-color:transparent;
+        border-bottom-right-radius: 4px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        .iconfont{
+          position: absolute;
+          bottom: -15px;
+          right: -15px;
+          font-size: 14px;
+          color: #ffffff;}
+      }
+    }
+
+    .card-cont{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .card-intro,.card-msg{
+      opacity: 1;
+      transition: all 0.5s;
+      .teamName{
+        font-size: 24px;
+        line-height:30px;
+        padding:0;
+        margin-bottom:10px;
+      }
+    }
+    .card-cont{
+      .cc{
+        opacity: 0;
+        .yuanzheng(68px);
+        font-size: 20px;
+        background-color: #fff;
+        position: absolute;
+        bottom: 0;
+        transform: rotateZ(180deg);
+        transition: all 0.5s;
+        .iconfont{
+          font-size: 30px;
+          color: #2D3652;
+        }
+        :hover{
+          color: #5899FC;;
+        }
+      }
+      .cc1{ left: 20px; transition-delay:0.1s; }
+      .cc2{ left: 106px; transition-delay:0.15s;  }
+      .cc3{ left: 192px; transition-delay:0.2s;  }
+    }
+    .card:hover {
+      .card-intro{
+        opacity: 0;
+      }
+      .cc {
+        opacity: 1;
+        transform: rotateZ(0deg);
+        bottom: 50px;
+      }
+    }
+
+    .card-add{
+      background: #ffffff;
+      color: #ccc;
+      text-align: center;
+      cursor: pointer;
+      .card-add-icon{
+        display: inline-block;
+        .zheng(48px);
+        margin-top: 25px;
+        margin-bottom: 10px;
+        font-size: 48px;
+      }
+      .card-add-word{
+        font-size: 18px;
+      }
+    }
+  }
+}
