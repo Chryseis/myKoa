@@ -4,7 +4,7 @@
 const http = require('http');
 const query=require('querystring')
 
-const host = '192.168.2.110';
+const host = '192.168.1.32';
 const port = '1023';
 
 
@@ -21,11 +21,14 @@ const httpRequest = (ctx) => {
         let requestBody;
         let body;
 
+
         if(ctx.request.header['content-type']!=='application/json'){
             requestBody=query.stringify(ctx.request.body)
         }else{
             requestBody=JSON.stringify(ctx.request.body)
         }
+        options.headers['Content-Length']=Buffer.byteLength(requestBody)
+
         console.log(options,query.stringify(ctx.request.body),ctx.request.body);
 
         const req = http.request(options, (res) => {

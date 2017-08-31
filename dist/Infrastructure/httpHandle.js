@@ -8,7 +8,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 var http = require('http');
 var query = require('querystring');
 
-var host = '192.168.2.110';
+var host = '192.168.1.32';
 var port = '1023';
 
 var httpRequest = function httpRequest(ctx) {
@@ -29,6 +29,8 @@ var httpRequest = function httpRequest(ctx) {
         } else {
             requestBody = JSON.stringify(ctx.request.body);
         }
+        options.headers['Content-Length'] = Buffer.byteLength(requestBody);
+
         console.log(options, query.stringify(ctx.request.body), ctx.request.body);
 
         var req = http.request(options, function (res) {
