@@ -3,7 +3,8 @@
  */
 const fs = require('fs')
 const Router = require('koa-router');
-const {getHandle, postHandle, putHandle, deleteHandle}=require('../Infrastructure/httpHandle');
+const {httpHandle}=require('../Infrastructure/httpHandle');
+const koaBody = require('koa-body')();
 
 const render = (page) => {
     return new Promise((resolve, reject) => {
@@ -20,10 +21,9 @@ const render = (page) => {
 
 let api = new Router();
 
-api.get('*', getHandle)
-    .post('*', async(ctx) => {
-    console.log(2)
-}).put('*', async(ctx) => {
+api.get('*', httpHandle)
+    .post('*',koaBody,httpHandle)
+    .put('*', async(ctx) => {
     console.log(3)
 }).del('*', async(ctx) => {
     console.log(4);

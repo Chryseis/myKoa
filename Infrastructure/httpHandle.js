@@ -2,65 +2,60 @@
  * Created by AllenFeng on 2017/8/30.
  */
 const http = require('http');
+const query=require('querystring')
 
-const host = '192.168.1.32';
+const host = '192.168.2.110';
 const port = '1023';
 
+
 const httpRequest = (ctx) => {
-    debugger;
-    delete ctx.request.header.host;
-    const options = {
-        host,
-        port,
-        path: ctx.request.url.substr(4, ctx.request.url.length),
-        method: ctx.request.method,
-        headers: ctx.request.header
-    }
+    return new Promise((resolve)=>{
+        delete ctx.request.header.host;
+        const options = {
+            host,
+            port,
+            path: ctx.request.url.substr(4, ctx.request.url.length),
+            method: ctx.request.method,
+            headers: ctx.request.header
+        }
+        let requestBody;
+        let body;
 
-    console.log(options);
+        if(ctx.request.header['content-type']!=='application/json'){
+            requestBody=query.stringify(ctx.request.body)
+        }else{
+            requestBody=JSON.stringify(ctx.request.body)
+        }
+        console.log(options,query.stringify(ctx.request.body),ctx.request.body);
 
-    const req = http.request(options, (res) => {
-        let body = '';
+        const req = http.request(options, (res) => {
+            res.setEncoding('utf8');
 
-        res.setEncoding('utf8');
+            res.on('data', (chunk) => {
+                console.log('chunk', chunk);
+                body = chunk;
+                resolve(body);
+            })
 
-        res.on('data', (chunk) => {
-            console.log('chunk',chunk);
-            body = chunk;
+            res.on('end', () => {
+                console.log('响应中已无数据。')
+            })
         })
 
-        res.on('end', () => {
-            console.log(ctx,body)
-            //ctx.type=res.headers['content-type'];
-            ctx.body=body;
-        })
+        ctx.request.body && req.write(requestBody);
+        req.end();
     })
 
-    ctx.request.body && req.write(ctx.request.body);
-    req.end();
-}
-
-
-const getHandle = async (ctx) => {
-    await httpRequest(ctx)
-}
-
-const postHandle = (ctx) => {
 
 }
 
-const putHandle = (ctx) => {
 
-}
-
-const deleteHandle = (ctx) => {
-
+const httpHandle = async(ctx) => {
+    let body= await httpRequest(ctx);
+    ctx.body=body;
 }
 
 
 module.exports = {
-    getHandle,
-    postHandle,
-    putHandle,
-    deleteHandle
+    httpHandle
 }

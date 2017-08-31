@@ -6,46 +6,53 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
  * Created by AllenFeng on 2017/8/30.
  */
 var http = require('http');
+var query = require('querystring');
 
-var host = '192.168.1.32';
+var host = '192.168.2.110';
 var port = '1023';
 
 var httpRequest = function httpRequest(ctx) {
-    debugger;
-    delete ctx.request.header.host;
-    var options = {
-        host: host,
-        port: port,
-        path: ctx.request.url.substr(4, ctx.request.url.length),
-        method: ctx.request.method,
-        headers: ctx.request.header
-    };
+    return new Promise(function (resolve) {
+        delete ctx.request.header.host;
+        var options = {
+            host: host,
+            port: port,
+            path: ctx.request.url.substr(4, ctx.request.url.length),
+            method: ctx.request.method,
+            headers: ctx.request.header
+        };
+        var requestBody = void 0;
+        var body = void 0;
 
-    console.log(options);
+        if (ctx.request.header['content-type'] !== 'application/json') {
+            requestBody = query.stringify(ctx.request.body);
+        } else {
+            requestBody = JSON.stringify(ctx.request.body);
+        }
+        console.log(options, query.stringify(ctx.request.body), ctx.request.body);
 
-    var req = http.request(options, function (res) {
-        var body = '';
+        var req = http.request(options, function (res) {
+            res.setEncoding('utf8');
 
-        res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                console.log('chunk', chunk);
+                body = chunk;
+                resolve(body);
+            });
 
-        res.on('data', function (chunk) {
-            console.log('chunk', chunk);
-            body = chunk;
+            res.on('end', function () {
+                console.log('响应中已无数据。');
+            });
         });
 
-        res.on('end', function () {
-            console.log(ctx, body);
-            //ctx.type=res.headers['content-type'];
-            ctx.body = body;
-        });
+        ctx.request.body && req.write(requestBody);
+        req.end();
     });
-
-    ctx.request.body && req.write(ctx.request.body);
-    req.end();
 };
 
-var getHandle = function () {
+var httpHandle = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(ctx) {
+        var body;
         return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
                 switch (_context.prev = _context.next) {
@@ -54,6 +61,11 @@ var getHandle = function () {
                         return httpRequest(ctx);
 
                     case 2:
+                        body = _context.sent;
+
+                        ctx.body = body;
+
+                    case 4:
                     case 'end':
                         return _context.stop();
                 }
@@ -61,21 +73,12 @@ var getHandle = function () {
         }, _callee, undefined);
     }));
 
-    return function getHandle(_x) {
+    return function httpHandle(_x) {
         return _ref.apply(this, arguments);
     };
 }();
 
-var postHandle = function postHandle(ctx) {};
-
-var putHandle = function putHandle(ctx) {};
-
-var deleteHandle = function deleteHandle(ctx) {};
-
 module.exports = {
-    getHandle: getHandle,
-    postHandle: postHandle,
-    putHandle: putHandle,
-    deleteHandle: deleteHandle
+    httpHandle: httpHandle
 };
 //# sourceMappingURL=httpHandle.js.map
