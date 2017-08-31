@@ -23,13 +23,14 @@ var httpRequest = function httpRequest(ctx) {
         };
         var requestBody = void 0;
         var body = void 0;
+        var head = void 0;
 
         if (ctx.request.header['content-type'] !== 'application/json') {
             requestBody = query.stringify(ctx.request.body);
         } else {
             requestBody = JSON.stringify(ctx.request.body);
         }
-        options.headers['Content-Length'] = Buffer.byteLength(requestBody);
+        ctx.request.body && (options.headers['Content-Length'] = Buffer.byteLength(requestBody));
 
         console.log(options, query.stringify(ctx.request.body), ctx.request.body);
 
@@ -37,14 +38,14 @@ var httpRequest = function httpRequest(ctx) {
             res.setEncoding('utf8');
 
             res.on('data', function (chunk) {
+
                 console.log('chunk', chunk);
                 body = chunk;
-                resolve(body);
+                head = res.headers;
+                resolve({ head: head, body: body });
             });
 
-            res.on('end', function () {
-                console.log('响应中已无数据。');
-            });
+            res.on('end', function () {});
         });
 
         ctx.request.body && req.write(requestBody);
@@ -54,7 +55,7 @@ var httpRequest = function httpRequest(ctx) {
 
 var httpHandle = function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(ctx) {
-        var body;
+        var content;
         return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
                 switch (_context.prev = _context.next) {
@@ -63,11 +64,13 @@ var httpHandle = function () {
                         return httpRequest(ctx);
 
                     case 2:
-                        body = _context.sent;
+                        content = _context.sent;
 
-                        ctx.body = body;
+                        console.log(content);
+                        ctx.type = content.head['content-type'];
+                        ctx.body = content.body;
 
-                    case 4:
+                    case 6:
                     case 'end':
                         return _context.stop();
                 }

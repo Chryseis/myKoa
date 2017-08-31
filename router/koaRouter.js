@@ -22,12 +22,8 @@ const render = (page) => {
 let api = new Router();
 
 api.get('*', httpHandle)
-    .post('*',koaBody,httpHandle)
-    .put('*', async(ctx) => {
-    console.log(3)
-}).del('*', async(ctx) => {
-    console.log(4);
-});
+    .post('*', koaBody, httpHandle)
+    .put('*', koaBody, httpHandle).del('*', koaBody, httpHandle);
 
 let common = new Router();
 common.get('*', async(ctx) => {

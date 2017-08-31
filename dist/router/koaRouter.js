@@ -28,15 +28,22 @@ var render = function render(page) {
 
 var api = new Router();
 
-api.get('*', httpHandle).post('*', koaBody, httpHandle).put('*', function () {
+api.get('*', httpHandle).post('*', koaBody, httpHandle).put('*', koaBody, httpHandle).del('*', koaBody, httpHandle);
+
+var common = new Router();
+common.get('*', function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(ctx) {
         return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
                 switch (_context.prev = _context.next) {
                     case 0:
-                        console.log(3);
+                        _context.next = 2;
+                        return render('index.html');
 
-                    case 1:
+                    case 2:
+                        ctx.body = _context.sent;
+
+                    case 3:
                     case 'end':
                         return _context.stop();
                 }
@@ -46,51 +53,6 @@ api.get('*', httpHandle).post('*', koaBody, httpHandle).put('*', function () {
 
     return function (_x) {
         return _ref.apply(this, arguments);
-    };
-}()).del('*', function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(ctx) {
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-            while (1) {
-                switch (_context2.prev = _context2.next) {
-                    case 0:
-                        console.log(4);
-
-                    case 1:
-                    case 'end':
-                        return _context2.stop();
-                }
-            }
-        }, _callee2, undefined);
-    }));
-
-    return function (_x2) {
-        return _ref2.apply(this, arguments);
-    };
-}());
-
-var common = new Router();
-common.get('*', function () {
-    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(ctx) {
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
-            while (1) {
-                switch (_context3.prev = _context3.next) {
-                    case 0:
-                        _context3.next = 2;
-                        return render('index.html');
-
-                    case 2:
-                        ctx.body = _context3.sent;
-
-                    case 3:
-                    case 'end':
-                        return _context3.stop();
-                }
-            }
-        }, _callee3, undefined);
-    }));
-
-    return function (_x3) {
-        return _ref3.apply(this, arguments);
     };
 }());
 
