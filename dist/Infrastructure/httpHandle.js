@@ -38,7 +38,6 @@ var httpRequest = function httpRequest(ctx) {
             res.setEncoding('utf8');
 
             res.on('data', function (chunk) {
-
                 console.log('chunk', chunk);
                 body = chunk;
                 head = res.headers;
