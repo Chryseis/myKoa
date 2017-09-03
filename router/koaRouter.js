@@ -4,7 +4,9 @@
 const fs = require('fs')
 const Router = require('koa-router');
 const {httpHandle} = require('../Infrastructure/httpHandle');
-const koaBody = require('koa-body')();
+const koaBody = require('koa-body')({
+    multipart :true
+});
 const body = require('koa-better-body')();
 
 const render = (page) => {

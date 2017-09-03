@@ -24,9 +24,9 @@ const httpRequest = (ctx) => {
 
         if (ctx.request.body) {
             console.log(ctx.request.header['content-type'])
-            if (ctx.request.header['content-type'] === 'application/x-www-form-urlencoded') {
+            if (ctx.request.header['content-type'].indexOf('application/x-www-form-urlencoded') > -1) {
                 requestBody = query.stringify(ctx.request.body)
-            } else if (ctx.request.header['content-type'] === 'application/json') {
+            } else if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
                 requestBody = JSON.stringify(ctx.request.body)
             }
             options.headers['Content-Length'] = Buffer.byteLength(requestBody)
@@ -36,7 +36,6 @@ const httpRequest = (ctx) => {
             //res.setEncoding('utf8');
 
             res.on('data', (chunk) => {
-                console.log('chunk', chunk);
                 body = chunk;
                 head = res.headers;
                 resolve({head, body});
@@ -54,7 +53,7 @@ const httpRequest = (ctx) => {
 
 const httpHandle = async (ctx) => {
     let content = await httpRequest(ctx);
-    console.log(content)
+    console.log(content,content.head['content-type'])
     ctx.type = content.head['content-type'];
     ctx.length = content.head['content-length'];
     ctx.body = content.body;
