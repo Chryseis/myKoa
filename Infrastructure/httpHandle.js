@@ -28,13 +28,15 @@ const httpRequest = (ctx) => {
                 requestBody = query.stringify(ctx.request.body)
             } else if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
                 requestBody = JSON.stringify(ctx.request.body)
+            }else if(ctx.request.header['content-type'].indexOf('multipart/form-data')>-1){
+                requestBody = JSON.stringify(ctx.request.body)
+            }else{
+                requestBody = JSON.stringify(ctx.request.body)
             }
             options.headers['Content-Length'] = Buffer.byteLength(requestBody)
         }
 
         const req = http.request(options, (res) => {
-            //res.setEncoding('utf8');
-
             res.on('data', (chunk) => {
                 body = chunk;
                 head = res.headers;
