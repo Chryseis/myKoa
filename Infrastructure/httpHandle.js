@@ -18,11 +18,11 @@ const httpRequest = (ctx) => {
             method: ctx.request.method,
             headers: ctx.request.header
         }
-        let requestBody;
-        let body;
-        let head;
-        let chunks = [];
-        let totallength = 0;
+        let requestBody,
+         body,
+         head,
+         chunks = [],
+         totallength = 0;
 
         if (ctx.request.body) {
             console.log(ctx.request.header['content-type'])
@@ -58,11 +58,9 @@ const httpRequest = (ctx) => {
 
 const httpHandle = async(ctx) => {
     let content = await httpRequest(ctx);
-    console.log(content, content.head['content-type'])
     ctx.type = content.head['content-type'];
     ctx.length = content.head['content-length'];
     ctx.body = content.body;
-
 }
 
 

@@ -21,11 +21,11 @@ var httpRequest = function httpRequest(ctx) {
             method: ctx.request.method,
             headers: ctx.request.header
         };
-        var requestBody = void 0;
-        var body = void 0;
-        var head = void 0;
-        var chunks = [];
-        var totallength = 0;
+        var requestBody = void 0,
+            body = void 0,
+            head = void 0,
+            chunks = [],
+            totallength = 0;
 
         if (ctx.request.body) {
             console.log(ctx.request.header['content-type']);
@@ -72,12 +72,11 @@ var httpHandle = function () {
                     case 2:
                         content = _context.sent;
 
-                        console.log(content, content.head['content-type']);
                         ctx.type = content.head['content-type'];
                         ctx.length = content.head['content-length'];
                         ctx.body = content.body;
 
-                    case 7:
+                    case 6:
                     case 'end':
                         return _context.stop();
                 }

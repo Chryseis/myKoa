@@ -34,7 +34,7 @@ common.get('*', async (ctx) => {
 })
 
 let router = new Router();
-router.use('/app', api.routes(), api.allowedMethods());
+router.use('/api', api.routes(), api.allowedMethods());
 router.use('/', common.routes(), common.allowedMethods());
 
 
