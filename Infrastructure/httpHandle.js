@@ -4,7 +4,7 @@
 const http = require('http');
 const query = require('querystring')
 
-const host = '192.168.1.32';
+const host = '121.40.30.204';
 const port = '1023';
 
 
@@ -22,24 +22,25 @@ const httpRequest = (ctx) => {
         let body;
         let head;
 
-        if (ctx.request.header['content-type'] !== 'application/json') {
-            requestBody = query.stringify(ctx.request.body)
-        } else {
-            requestBody = JSON.stringify(ctx.request.body)
+        if (ctx.request.body) {
+            console.log(ctx.request.header['content-type'])
+            if (ctx.request.header['content-type'].indexOf('application/x-www-form-urlencoded') > -1) {
+                requestBody = query.stringify(ctx.request.body)
+            } else if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
+                requestBody = JSON.stringify(ctx.request.body)
+            }else if(ctx.request.header['content-type'].indexOf('multipart/form-data')>-1){
+                requestBody = JSON.stringify(ctx.request.body)
+            }else{
+                requestBody = JSON.stringify(ctx.request.body)
+            }
+            options.headers['Content-Length'] = Buffer.byteLength(requestBody)
         }
-        ctx.request.body && (options.headers['Content-Length'] = Buffer.byteLength(requestBody))
-
-
-        console.log(options, query.stringify(ctx.request.body), ctx.request.body);
 
         const req = http.request(options, (res) => {
-            res.setEncoding('utf8');
-
             res.on('data', (chunk) => {
-                console.log('chunk', chunk);
                 body = chunk;
-                head=res.headers;
-                resolve({head,body});
+                head = res.headers;
+                resolve({head, body});
             })
 
             res.on('end', () => {
@@ -52,11 +53,13 @@ const httpRequest = (ctx) => {
     })
 }
 
-const httpHandle = async(ctx) => {
+const httpHandle = async (ctx) => {
     let content = await httpRequest(ctx);
-    console.log(content)
-    ctx.type=content.head['content-type'];
+    console.log(content,content.head['content-type'])
+    ctx.type = content.head['content-type'];
+    ctx.length = content.head['content-length'];
     ctx.body = content.body;
+
 }
 
 
