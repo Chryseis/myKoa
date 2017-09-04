@@ -11,7 +11,10 @@ var Router = require('koa-router');
 var _require = require('../Infrastructure/httpHandle'),
     httpHandle = _require.httpHandle;
 
-var koaBody = require('koa-body')();
+var koaBody = require('koa-body')({
+    multipart: true
+});
+//const body = require('koa-better-body')();
 
 var render = function render(page) {
     return new Promise(function (resolve, reject) {

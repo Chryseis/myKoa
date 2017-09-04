@@ -7,7 +7,7 @@ const {httpHandle} = require('../Infrastructure/httpHandle');
 const koaBody = require('koa-body')({
     multipart :true
 });
-const body = require('koa-better-body')();
+//const body = require('koa-better-body')();
 
 const render = (page) => {
     return new Promise((resolve, reject) => {

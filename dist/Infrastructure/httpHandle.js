@@ -24,27 +24,34 @@ var httpRequest = function httpRequest(ctx) {
         var requestBody = void 0;
         var body = void 0;
         var head = void 0;
+        var chunks = [];
+        var totallength = 0;
 
-        if (ctx.request.header['content-type'] !== 'application/json') {
-            requestBody = query.stringify(ctx.request.body);
-        } else {
-            requestBody = JSON.stringify(ctx.request.body);
+        if (ctx.request.body) {
+            console.log(ctx.request.header['content-type']);
+            if (ctx.request.header['content-type'].indexOf('application/x-www-form-urlencoded') > -1) {
+                requestBody = query.stringify(ctx.request.body);
+            } else if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
+                requestBody = JSON.stringify(ctx.request.body);
+            } else if (ctx.request.header['content-type'].indexOf('multipart/form-data') > -1) {
+                requestBody = JSON.stringify(ctx.request.body);
+            } else {
+                requestBody = JSON.stringify(ctx.request.body);
+            }
+            options.headers['Content-Length'] = Buffer.byteLength(requestBody);
         }
-        ctx.request.body && (options.headers['Content-Length'] = Buffer.byteLength(requestBody));
-
-        console.log(options, query.stringify(ctx.request.body), ctx.request.body);
 
         var req = http.request(options, function (res) {
-            res.setEncoding('utf8');
-
             res.on('data', function (chunk) {
-                console.log('chunk', chunk);
-                body = chunk;
+                chunks.push(chunk);
+                totallength += chunk.length;
+            });
+
+            res.on('end', function () {
+                body = Buffer.concat(chunks, totallength);
                 head = res.headers;
                 resolve({ head: head, body: body });
             });
-
-            res.on('end', function () {});
         });
 
         ctx.request.body && req.write(requestBody);
@@ -65,11 +72,12 @@ var httpHandle = function () {
                     case 2:
                         content = _context.sent;
 
-                        console.log(content);
+                        console.log(content, content.head['content-type']);
                         ctx.type = content.head['content-type'];
+                        ctx.length = content.head['content-length'];
                         ctx.body = content.body;
 
-                    case 6:
+                    case 7:
                     case 'end':
                         return _context.stop();
                 }

@@ -4,7 +4,7 @@
 const http = require('http');
 const query = require('querystring')
 
-const host = '121.40.30.204';
+const host = '192.168.1.32';
 const port = '1023';
 
 
@@ -21,6 +21,8 @@ const httpRequest = (ctx) => {
         let requestBody;
         let body;
         let head;
+        let chunks = [];
+        let totallength = 0;
 
         if (ctx.request.body) {
             console.log(ctx.request.header['content-type'])
@@ -28,9 +30,9 @@ const httpRequest = (ctx) => {
                 requestBody = query.stringify(ctx.request.body)
             } else if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
                 requestBody = JSON.stringify(ctx.request.body)
-            }else if(ctx.request.header['content-type'].indexOf('multipart/form-data')>-1){
+            } else if (ctx.request.header['content-type'].indexOf('multipart/form-data') > -1) {
                 requestBody = JSON.stringify(ctx.request.body)
-            }else{
+            } else {
                 requestBody = JSON.stringify(ctx.request.body)
             }
             options.headers['Content-Length'] = Buffer.byteLength(requestBody)
@@ -38,13 +40,14 @@ const httpRequest = (ctx) => {
 
         const req = http.request(options, (res) => {
             res.on('data', (chunk) => {
-                body = chunk;
-                head = res.headers;
-                resolve({head, body});
+                chunks.push(chunk);
+                totallength += chunk.length;
             })
 
             res.on('end', () => {
-
+                body = Buffer.concat(chunks, totallength);
+                head = res.headers;
+                resolve({head, body});
             })
         })
 
@@ -53,9 +56,9 @@ const httpRequest = (ctx) => {
     })
 }
 
-const httpHandle = async (ctx) => {
+const httpHandle = async(ctx) => {
     let content = await httpRequest(ctx);
-    console.log(content,content.head['content-type'])
+    console.log(content, content.head['content-type'])
     ctx.type = content.head['content-type'];
     ctx.length = content.head['content-length'];
     ctx.body = content.body;
