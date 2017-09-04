@@ -29,6 +29,7 @@ const httpRequest = (ctx) => {
         }
         ctx.request.body && (options.headers['Content-Length'] = Buffer.byteLength(requestBody))
 
+
         console.log(options, query.stringify(ctx.request.body), ctx.request.body);
 
         const req = http.request(options, (res) => {
