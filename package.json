@@ -8,6 +8,7 @@
     "koa": "^2.3.0",
     "koa-better-body": "^3.0.4",
     "koa-body": "^2.3.0",
+    "koa-convert": "^1.2.0",
     "koa-router": "^7.2.1",
     "node-inspect": "^1.11.2",
     "whatwg-fetch": "^2.0.3"

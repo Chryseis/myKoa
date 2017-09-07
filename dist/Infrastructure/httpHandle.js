@@ -34,7 +34,7 @@ var httpRequest = function httpRequest(ctx) {
             } else if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
                 requestBody = JSON.stringify(ctx.request.body);
             } else if (ctx.request.header['content-type'].indexOf('multipart/form-data') > -1) {
-                requestBody = JSON.stringify(ctx.request.body);
+                requestBody = Buffer.from(JSON.stringify(ctx.request.body));
             } else {
                 requestBody = JSON.stringify(ctx.request.body);
             }

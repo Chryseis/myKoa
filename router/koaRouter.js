@@ -4,9 +4,11 @@
 const fs = require('fs')
 const Router = require('koa-router');
 const {httpHandle} = require('../Infrastructure/httpHandle');
-const koaBody = require('koa-body')({
-    multipart :true
-});
+// const koaBody = require('koa-body')({
+//     multipart :true
+// });
+
+//const body=require('koa-better-body')();
 //const body = require('koa-better-body')();
 
 const render = (page) => {
@@ -25,8 +27,8 @@ const render = (page) => {
 let api = new Router();
 
 api.get('*', httpHandle)
-    .post('*', koaBody, httpHandle)
-    .put('*', koaBody, httpHandle).del('*', koaBody, httpHandle);
+    .post('*', httpHandle)
+    .put('*', httpHandle).del('*', httpHandle);
 
 let common = new Router();
 common.get('*', async (ctx) => {
