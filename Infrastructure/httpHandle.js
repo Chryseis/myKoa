@@ -48,12 +48,12 @@ const httpRequest = (ctx) => {
                 filesLength = 0;
 
                 Object.keys(fileFields).forEach((key) => {
-                    requestBody += boundary + `Content-Disposition:form-data;name=${key}\r\n\r\n${fileFields[key]}`;
+                    requestBody +=  `${boundary}Content-Disposition:form-data;name="${key}"\r\n\r\n${fileFields[key]}`;
                 })
 
                 Object.keys(files).forEach((key) => {
-                    requestBody += `${boundary}Content-Type: application/octet-stream\r\nContent-Disposition: form-data; name=${key};filename=${files[key].name}\r\nContent-Transfer-Encoding: binary\r\n\r\n`;
-                    filesLength += Buffer.byteLength(requestBody,'utf-8') + files[key].size;
+                    requestBody += `${boundary}Content-Type: application/octet-stream\r\nContent-Disposition: form-data; name="${key}";filename="${files[key].name}"\r\nContent-Transfer-Encoding: binary\r\n\r\n`;
+                    filesLength += Buffer.byteLength(requestBody) + files[key].size;
                 })
 
                 options.headers['Content-Type'] = `multipart/form-data; boundary=--${boundaryKey}`;
@@ -85,7 +85,7 @@ const httpRequest = (ctx) => {
             filesArr.forEach((key) => {
                 let fileStream = fs.createReadStream(files[key].path);
                 fileStream.on('end', () => {
-                    fs.unlink(files[key].path);
+                    fs.unlinkSync(files[key].path);
                     uploadConnt++;
                     if (uploadConnt == filesArr.length) {
                         req.end(endData)
