@@ -10,10 +10,10 @@ const router = require('./router/koaRouter')
 const app = new Koa();
 const staticPath = './static';
 
-app.use(convert(body({
-    fields:'body',
-    buffer:true
-})));
+// app.use(convert(body({
+//     fields:'body',
+//     buffer:true
+// })));
 
 app.use(Static(path.join(__dirname, staticPath)))
 

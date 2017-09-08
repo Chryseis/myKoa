@@ -7,6 +7,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
  */
 var http = require('http');
 var query = require('querystring');
+var fs = require('fs');
 
 var host = '192.168.1.32';
 var port = '1023';
@@ -21,24 +22,49 @@ var httpRequest = function httpRequest(ctx) {
             method: ctx.request.method,
             headers: ctx.request.header
         };
-        var requestBody = void 0,
+        var requestBody = '',
             body = void 0,
             head = void 0,
             chunks = [],
+            fileFields = void 0,
+            files = void 0,
+            boundaryKey = void 0,
+            boundary = void 0,
+            endData = void 0,
+            filesLength = void 0,
             totallength = 0;
 
         if (ctx.request.body) {
             console.log(ctx.request.header['content-type']);
             if (ctx.request.header['content-type'].indexOf('application/x-www-form-urlencoded') > -1) {
                 requestBody = query.stringify(ctx.request.body);
+                options.headers['Content-Length'] = Buffer.byteLength(requestBody);
             } else if (ctx.request.header['content-type'].indexOf('application/json') > -1) {
                 requestBody = JSON.stringify(ctx.request.body);
+                options.headers['Content-Length'] = Buffer.byteLength(requestBody);
             } else if (ctx.request.header['content-type'].indexOf('multipart/form-data') > -1) {
-                requestBody = Buffer.from(JSON.stringify(ctx.request.body));
+                fileFields = ctx.request.body.fields;
+                files = ctx.request.body.files;
+                boundaryKey = Math.random().toString(16);
+                boundary = '\r\n----' + boundaryKey + '\r\n';
+                endData = '\r\n----' + boundaryKey + '--';
+                filesLength = 0;
+
+                Object.keys(fileFields).forEach(function (key) {
+                    requestBody += boundary + ('Content-Disposition:form-data;name=' + key + '\r\n\r\n' + fileFields[key]);
+                });
+
+                Object.keys(files).forEach(function (key) {
+                    requestBody += boundary + 'Content-Type: application/octet-stream\r\nContent-Disposition: form-data; name=' + key + ';filename=' + files[key].name + '\r\nContent-Transfer-Encoding: binary\r\n\r\n';
+                    filesLength += Buffer.byteLength(requestBody, 'utf-8') + files[key].size;
+                });
+
+                options.headers['Content-Type'] = 'multipart/form-data; boundary=--' + boundaryKey;
+                options.headers['Content-Length'] = filesLength + Buffer.byteLength(endData);
             } else {
                 requestBody = JSON.stringify(ctx.request.body);
+                options.headers['Content-Length'] = Buffer.byteLength(requestBody);
             }
-            options.headers['Content-Length'] = Buffer.byteLength(requestBody);
         }
 
         var req = http.request(options, function (res) {
@@ -55,7 +81,24 @@ var httpRequest = function httpRequest(ctx) {
         });
 
         ctx.request.body && req.write(requestBody);
-        req.end();
+
+        if (fileFields) {
+            var filesArr = Object.keys(files);
+            var uploadConnt = 0;
+            filesArr.forEach(function (key) {
+                var fileStream = fs.createReadStream(files[key].path);
+                fileStream.on('end', function () {
+                    fs.unlink(files[key].path);
+                    uploadConnt++;
+                    if (uploadConnt == filesArr.length) {
+                        req.end(endData);
+                    }
+                });
+                fileStream.pipe(req, { end: false });
+            });
+        } else {
+            req.end();
+        }
     });
 };
 

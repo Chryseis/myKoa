@@ -10,9 +10,10 @@ var Router = require('koa-router');
 
 var _require = require('../Infrastructure/httpHandle'),
     httpHandle = _require.httpHandle;
-// const koaBody = require('koa-body')({
-//     multipart :true
-// });
+
+var koaBody = require('koa-body')({
+    multipart: true
+});
 
 //const body=require('koa-better-body')();
 //const body = require('koa-better-body')();
@@ -32,7 +33,7 @@ var render = function render(page) {
 
 var api = new Router();
 
-api.get('*', httpHandle).post('*', httpHandle).put('*', httpHandle).del('*', httpHandle);
+api.get('*', httpHandle).post('*', koaBody, httpHandle).put('*', koaBody, httpHandle).del('*', koaBody, httpHandle);
 
 var common = new Router();
 common.get('*', function () {
