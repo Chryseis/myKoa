@@ -5,7 +5,7 @@ const http = require('http');
 const query = require('querystring');
 const fs = require('fs');
 
-const host = '192.168.1.32';
+const host = '121.40.30.204';
 const port = '1023';
 
 
@@ -65,16 +65,17 @@ const httpRequest = (ctx) => {
         }
 
         const req = http.request(options, (res) => {
-            res.on('data', (chunk) => {
-                chunks.push(chunk);
-                totallength += chunk.length;
-            })
-
-            res.on('end', () => {
-                body = Buffer.concat(chunks, totallength);
-                head = res.headers;
-                resolve({head, body});
-            })
+            // res.on('data', (chunk) => {
+            //     chunks.push(chunk);
+            //     totallength += chunk.length;
+            // })
+            //
+            // res.on('end', () => {
+            //     body = Buffer.concat(chunks, totallength);
+            //     head = res.headers;
+            //     resolve({head, body});
+            // })
+            resolve(res)
         })
 
         ctx.request.body && req.write(requestBody);
@@ -102,9 +103,10 @@ const httpRequest = (ctx) => {
 
 const httpHandle = async(ctx) => {
     let content = await httpRequest(ctx);
-    ctx.type = content.head['content-type'];
-    ctx.length = content.head['content-length'];
-    ctx.body = content.body;
+    // ctx.type = content.head['content-type'];
+    // ctx.length = content.head['content-length'];
+    // ctx.body = content.body;
+    ctx.body=content
 }
 
 
