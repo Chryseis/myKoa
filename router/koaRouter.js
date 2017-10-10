@@ -6,7 +6,8 @@ const Router = require('koa-router');
 const appData = require('../data/data.json')
 const {httpHandle} = require('../Infrastructure/httpHandle');
 const koaBody = require('koa-body')({
-    multipart: true
+    multipart :true,
+    strict:false
 });
 
 //const body=require('koa-better-body')();
