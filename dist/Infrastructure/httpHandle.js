@@ -9,7 +9,7 @@ var http = require('http');
 var query = require('querystring');
 var fs = require('fs');
 
-var host = '192.168.1.32';
+var host = '121.40.30.204';
 var port = '1023';
 
 var httpRequest = function httpRequest(ctx) {
@@ -68,16 +68,17 @@ var httpRequest = function httpRequest(ctx) {
         }
 
         var req = http.request(options, function (res) {
-            res.on('data', function (chunk) {
-                chunks.push(chunk);
-                totallength += chunk.length;
-            });
-
-            res.on('end', function () {
-                body = Buffer.concat(chunks, totallength);
-                head = res.headers;
-                resolve({ head: head, body: body });
-            });
+            // res.on('data', (chunk) => {
+            //     chunks.push(chunk);
+            //     totallength += chunk.length;
+            // })
+            //
+            // res.on('end', () => {
+            //     body = Buffer.concat(chunks, totallength);
+            //     head = res.headers;
+            //     resolve({head, body});
+            // })
+            resolve(res);
         });
 
         ctx.request.body && req.write(requestBody);
@@ -115,11 +116,12 @@ var httpHandle = function () {
                     case 2:
                         content = _context.sent;
 
-                        ctx.type = content.head['content-type'];
-                        ctx.length = content.head['content-length'];
-                        ctx.body = content.body;
+                        // ctx.type = content.head['content-type'];
+                        // ctx.length = content.head['content-length'];
+                        // ctx.body = content.body;
+                        ctx.body = content;
 
-                    case 6:
+                    case 4:
                     case 'end':
                         return _context.stop();
                 }

@@ -13,7 +13,8 @@ var _require = require('../Infrastructure/httpHandle'),
     httpHandle = _require.httpHandle;
 
 var koaBody = require('koa-body')({
-    multipart: true
+    multipart: true,
+    strict: false
 });
 
 //const body=require('koa-better-body')();
